@@ -5,6 +5,7 @@
 O repositório está estruturado para representar uma arquitetura MVC (Models, Views, Controllers) modificada para se aproximar de uma arquitetura limpa com base nas experiências do Autor [Mauricio Benjamin](https://github.com/mauriciobenjamin700)
 
 - docs: documentação de funcionalidades e regras do sistema.
+- images: imagens que a aplicação venha a usar dentro das views.
 - src: todos os códigos do projeto.
   - models: modelos de dados e interação com o backend.
   - views: interação do usuário com o sistema.
