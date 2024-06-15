@@ -14,30 +14,34 @@ model = get_model()
 
 cap = cv2.VideoCapture(VIDEO_PATH)
 
-if not cap.isOpened():
-    print("Erro ao abrir o vídeo.")
-    sys.exit()
+def validate_capture(cap: cv2.VideoCapture) -> bool:
+    if not cap.isOpened():
+        return False
 
-ret, frame = cap.read()
-if not ret:
-    print("Erro ao ler o primeiro frame.")
-    sys.exit()
-
-# Inicialize o rastreador com o primeiro frame
-results = model.track(frame, persist=True)
-
-while ret:
-    ret, frame = cap.read()  # Leia frame por frame do vídeo
+    ret, _ = cap.read()
     if not ret:
-        break
-
-    results = model.track(frame, persist=True)  # Detecte e rastreie objetos
+        return False
     
-    frame_plot = results[0].plot()  # Obtenha o resultado da detecção e rastreamento
+    return True 
 
-    cv2.imshow("Frame", frame_plot)
-    if cv2.waitKey(25) & 0xFF == ord('q'):
-        break
+if validate_capture(cap):
 
-cap.release()
-cv2.destroyAllWindows()
+    ret, frame = cap.read()
+    while ret:
+        ret, frame = cap.read()  # Leia frame por frame do vídeo
+        if not ret:
+            break
+
+        results = model.track(frame, persist=True)  # Detecte e rastreie objetos
+        
+        frame_plot = results[0].plot()  # Obtenha o resultado da detecção e rastreamento
+
+        cv2.imshow("Frame", frame_plot)
+        if cv2.waitKey(25) & 0xFF == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+    
+else:
+    print("Failed to create window")

@@ -6,15 +6,16 @@ Este Modulo é responsavel pela manipulação do Modelo YOLO para detecção e c
     - Funcs:
         - get_model
         - predict
+        - track
         
     - Classes:
 
-    
 """
 
+from cv2 import VideoCapture
+from typing import Tuple
 from ultralytics import YOLO
-from os.path import dirname, abspath, join
-
+from os.path import abspath, dirname, join, basename
 
 
 def get_model() -> YOLO:
@@ -27,12 +28,13 @@ def get_model() -> YOLO:
     
     return model
 
-def predict(video_path: str ,model : YOLO = get_model()):
+def predict(video: str ,model : YOLO = get_model()) -> dict:
+    """
+    Realiza a extração das métricas em cada frame do vídeo
+    """
     
-    results = model(video_path)
+    results = model(video)
 
-    
-    
     predicts = {}
     
     for id, result in enumerate(results,0):
@@ -46,3 +48,51 @@ def predict(video_path: str ,model : YOLO = get_model()):
         predicts[id] = dic
     
     return predicts
+
+def track(video: str | object, model: YOLO = get_model()) -> Tuple[list,list]:
+    """
+    Realiza a marcação das classes no vídeo e retorna uma lista com os resultados e outra com os frames para plot
+    
+    Return:
+    Tuple(results, frames)
+    """
+
+    if isinstance(video, str):
+        cap = VideoCapture(video)
+
+    def validate_capture(cap: VideoCapture) -> bool:
+        if not cap.isOpened():
+            return False
+
+        ret, _ = cap.read()
+        if not ret:
+            return False
+        
+        return True 
+
+    if validate_capture(cap):
+        
+        results = []
+        frames = []
+
+        ret, frame = cap.read()
+        while ret:
+            ret, frame = cap.read()  # Leia frame por frame do vídeo
+            if not ret:
+                break
+            
+            result = model.track(frame, persist=True)
+            results.append(result)  # Detecte e rastreie objetos
+            frames.append(result[0].plot())  # Obtenha o resultado da detecção e rastreamento
+
+
+        cap.release()
+        
+        return (results, frames)
+        
+    else:
+        return ([], [])
+
+
+    
+
