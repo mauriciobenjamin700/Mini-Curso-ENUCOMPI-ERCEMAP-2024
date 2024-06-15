@@ -65,15 +65,24 @@ def describe_results(result: Results):
     for key, value in dic.items():
         print(f"\n\n{key}: {value}\n")
 
-def result2json(result: Results, output: str = "file.json",):
+def result2json(results: Results | list, output: str = "file.json"):
+    """
     
-    if isinstance(result, list):
-        result = result[0]
-    
-    data = loads(result.tojson())
+    """
+
+    if isinstance(results, list):
+        if len(results) == 1: # Caso seja uma lista com um único item
+            results = results[0]
+            json_object = loads(results.tojson())
+        else: # caso seja uma lista com vários itens
+            data = []
+            for result in results: # para cada item, acessa o objeto
+                data.append(result[0].tojson())
+                
+            json_object = [loads(json_str) for json_str in data]
     
     with open(output, "w", encoding='utf-8') as json_file:
-        dump(data, json_file, ensure_ascii=False, indent=4)
+        dump(json_object, json_file, ensure_ascii=False, indent=4)
     
 def predict(video: str ,model : YOLO = get_model()) -> dict:
     """
