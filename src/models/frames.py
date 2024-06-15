@@ -44,12 +44,18 @@ def get_video_settings(video: str | VideoCapture) -> dict:
     if isinstance(video, str):
         video = VideoCapture(video)
         
+     # Coletando um frame para avaliar se o vídeo é ou não colorido
+    ret, frame = video.read()
+    if not ret:
+        raise ValueError("Não foi possível ler o vídeo.")
 
+    video.release()
     
     settings = {
         "fourcc": VideoWriter_fourcc(*'mp4v'),
         "fps": int(video.get(CAP_PROP_FPS)),
-        "frameSize": (int(video.get(CAP_PROP_FRAME_WIDTH)), int(video.get(CAP_PROP_FRAME_HEIGHT)))
+        "frameSize": (int(video.get(CAP_PROP_FRAME_WIDTH)), int(video.get(CAP_PROP_FRAME_HEIGHT))),
+        "is_color": len(frame.shape) == 3 and frame.shape[2] == 3
     }
 
     return settings
