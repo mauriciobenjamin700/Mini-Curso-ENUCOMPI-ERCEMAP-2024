@@ -5,6 +5,7 @@ description = "Um software para realizar a contagem de animais em vídeos usando
 authors = ["Mauricio Benjamin <mauriciobenjamin700@gmail.com>"]
 license = "LICENSE"
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.10"

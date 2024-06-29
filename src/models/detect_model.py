@@ -11,13 +11,11 @@ Este Modulo é responsavel pela manipulação do Modelo YOLO para detecção e c
     - Classes:
 
 """
-
 from cv2 import VideoCapture
 from json import dump, loads
 from typing import List, Tuple
 from ultralytics import YOLO
 from os.path import abspath, dirname, join
-
 from ultralytics.engine.results import Results
 
 
@@ -67,7 +65,14 @@ def describe_results(result: Results):
 
 def result2json(results: Results | list, output: str = "file.json"):
     """
+    Salva os resultados da detecção em um Arquivo JSON
     
+    Args:
+        results (Results): Objeto results gerado pela yolo após um processo
+        output (str, optional): Caminho para salvar o arquivo json. Defaults to "file.json".
+        
+    Return:
+        None
     """
 
     if isinstance(results, list):

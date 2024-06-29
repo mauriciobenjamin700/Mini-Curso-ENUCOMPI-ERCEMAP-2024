@@ -30,5 +30,6 @@ Passo a Passo para realizar a instalação:
 - Execute o comando `poetry install`
 - Ative o ambiente virtual usando `poetry shell`
 - Prontinho, seu projeto está configurado e pronto para ser usado
+- Caso esteja usando linux e encontre algum erro, instale as seguintes dependências adicionais: ``sudo apt-get update &sudo apt-get install libgl1-mesa-glx``
 
 Caso seja desenvolvedor, acesso o manual do desenvolvedor clicando [aqui](docs/developer.md)

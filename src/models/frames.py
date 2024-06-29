@@ -6,6 +6,7 @@ Este Modulo é responsavel pela manipulação dos resultados provindos do Modelo
     - Funcs:
         - plot
         - generate_video
+        -get_video_settings
         
         
     - Classes:
@@ -15,7 +16,7 @@ Este Modulo é responsavel pela manipulação dos resultados provindos do Modelo
 
 from cv2 import VideoCapture, VideoWriter
 from cv2 import CAP_PROP_FRAME_HEIGHT, CAP_PROP_FRAME_WIDTH, CAP_PROP_FPS, VideoWriter_fourcc
-from os.path import dirname, join, basename
+from os.path import exists
 
 def plot(plots: list) -> None:
     """
@@ -33,12 +34,17 @@ def plot(plots: list) -> None:
 
 def get_video_settings(video: str | VideoCapture) -> dict:
     """
+    Obtem as configurações do vídeo e as retorna em formato de dicionário
+    
+    Args:
+        Vídeo: str or VideoCapture: Video que será análisado
     
     Return
         dict{
             fourcc: int,
             fps: float,
             frameSize: Size: tuple
+            is_color: bool
         }
     """
     if isinstance(video, str):
@@ -59,8 +65,72 @@ def get_video_settings(video: str | VideoCapture) -> dict:
     }
 
     return settings
+
+def video2frames(video: str | VideoCapture) -> list:
+    """
+    Realiza a marcação das classes no vídeo e retorna uma lista com os resultados e outra com os frames para plot
+    
+    Args:
+        video: str or VideoCapture
+        model: YOLO
+    
+    Return:
+    Tuple(results, frames)
+    """
+
+    if isinstance(video, str):
+        cap = VideoCapture(video)
+
+    def validate_capture(cap: VideoCapture) -> bool:
+        if not cap.isOpened():
+            return False
+
+        ret, _ = cap.read()
+        if not ret:
+            return False
+        
+        return True 
+
+    if validate_capture(cap):
+        
+        frames = []
+
+        ret = True
+        while ret:
+            ret, frame = cap.read()  # Leia frame por frame do vídeo
+            if not ret:
+                break
+            
+            
+            frames.append(frame)  # Obtenha o resultado da detecção e rastreamento
+
+
+        cap.release()
+        
+    return frames
+    
     
 def save_video(output: str, frames, settings: dict) -> None:
+    video = VideoWriter(
+        filename=output,
+        fourcc=settings["fourcc"],
+        fps=settings["fps"],
+        frameSize=settings["frameSize"],
+        isColor=settings["is_color"]
+    )
+    
+    if len(frames) == 0:
+        print("Lista de frames está vazia. Não há nada para salvar.")
+        return
+    else:
+        print(len(frames), " Frames Salvos")
+    
+    for frame in frames:
+        video.write(frame)
+    
+    video.release()
+    print(f"Vídeo salvo em: {output}")
+    """   
     video = VideoWriter(
         filename=output,
         fourcc=settings["fourcc"],
@@ -73,11 +143,21 @@ def save_video(output: str, frames, settings: dict) -> None:
         video.write(frame)
         
     video.release()
+    """
     
-def generate_video(video: str, frames):
+def generate_video(file_name: str, frames, settings: dict):
     """
     Gera um vídeo novo com as anotações feitas pelo modelo yolo
-    """
-    settings = get_video_settings(video)
     
-    save_video(join(dirname(video),basename(video)+".mp4"),frames, settings)
+    Args:
+        video: str: Caminho para salvar o vídeo
+        frames: list: Lista com os frames que serão salvos no vídeo
+    
+    Return:
+        None
+    """
+    
+    if exists(file_name):
+        save_video(f"{file_name}_new.mp4",frames, settings)
+    else:
+        save_video(f"{file_name}_new.mp4",frames, settings)
