@@ -2,7 +2,8 @@ import customtkinter as ctk
 from tkinter import filedialog
 import os
 from PIL import Image, ImageTk
-from src.views.templates.loading_screen import LoadingScreen
+from src.views.loading_screen import LoadingScreen
+from src.controllers.apply import predict
 
 class VideoScreen(ctk.CTkFrame):
     def __init__(self, parent, show_loading_screen):
@@ -92,6 +93,36 @@ class VideoScreen(ctk.CTkFrame):
             print("Nenhum vídeo foi selecionado.")
 
     def start_counting(self):
-        print("Contagem iniciada!")
-        # Chama a tela de loading
-        self.show_loading_screen()
+        if not hasattr(self, "selected_video_path") or not self.selected_video_path:
+            self.file_name_label.configure(text="Por favor, selecione um vídeo primeiro!")
+            return
+
+        # Exibe a tela de loading com o vídeo selecionado
+        self.show_loading_screen(self.selected_video_path)
+
+
+
+
+    def process_video(self):
+        video_path = self.selected_video_path
+        print(f"Processando o vídeo: {video_path}")
+        
+        try:
+            # Chama a função predict e obtem os resultados
+            results = predict(video_path)
+            print("Resultados:", results)
+
+            # Formata os resultados para serem exibidos na ResultsScreen
+            counting_data = {class_name: count for class_name, count in results[0]['counting_class'].items()}
+
+            # Verifica se o método show_results_screen existe e chama com os dados
+            if hasattr(self.master, "show_results_screen"):
+                self.master.show_results_screen(counting_data)
+            else:
+                print("Erro: Método 'show_results_screen' não encontrado na classe principal")
+            
+        except Exception as e:
+            print(f"Erro ao processar o vídeo: {e}")
+            self.file_name_label.configure(text="Erro ao processar o vídeo")
+
+
