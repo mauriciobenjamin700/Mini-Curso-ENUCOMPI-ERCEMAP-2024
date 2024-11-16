@@ -81,11 +81,13 @@ class VideoScreen(ctk.CTkFrame):
         )
 
         if file_path:
+            self.selected_video_path = file_path
             # Atualiza o texto do label com o nome do arquivo
             file_name = os.path.basename(file_path)  # Extrai apenas o nome do arquivo
             self.file_name_label.configure(text=f"Selecionado: {file_name}")
             print(f"Vídeo selecionado: {file_path}")  # Para debug
         else:
+            self.selected_video_path = None
             self.file_name_label.configure(text="Nenhum vídeo selecionado")
             print("Nenhum vídeo foi selecionado.")
 
