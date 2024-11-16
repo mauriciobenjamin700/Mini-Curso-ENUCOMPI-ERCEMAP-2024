@@ -1,26 +1,20 @@
 """
-Este Modulo é responsavel pela manipulação dos resultados provindos do Modelo YOLO para detecção e contagem dos animais:
+Manipulação dos resultados provindos do Modelo YOLO para detecção e contagem dos animais:
 
-    - Constraints:
-        
-    - Funcs:
-        - plot
-        - generate_video
-        -get_video_settings
-        
-        
-    - Classes:
-
-    
+- get_video_settings()
+- video2frames()
+- save_video()
+- generate_video()
+- take_one_frame()
+- track_one_frame()
 """
-from cv2 import (
-    VideoCapture, 
-    VideoWriter
-)
+
 from cv2 import (
     CAP_PROP_FRAME_HEIGHT, 
     CAP_PROP_FRAME_WIDTH, 
-    CAP_PROP_FPS, 
+    CAP_PROP_FPS,
+    VideoCapture,
+    VideoWriter, 
     VideoWriter_fourcc
 )
 from os.path import exists
@@ -109,6 +103,18 @@ def video2frames(video: str | VideoCapture) -> list:
     
     
 def save_video(output: str, frames, settings: dict) -> None:
+    """
+    Salva o vídeo com as anotações feitas pelo modelo yolo
+    
+    - Args:
+        - output (str): Caminho para salvar o arquivo de vídeo
+        - frames (list): Lista de frames do vídeo
+        - settings (dict): Configurações do vídeo
+
+    - Return:
+        - None
+
+    """
     video = VideoWriter(
         filename=output,
         fourcc=settings["fourcc"],
@@ -147,12 +153,12 @@ def generate_video(file_name: str, frames, settings: dict):
     """
     Gera um vídeo novo com as anotações feitas pelo modelo yolo
     
-    Args:
-        video: str: Caminho para salvar o vídeo
-        frames: list: Lista com os frames que serão salvos no vídeo
+    - Args:
+        - video: str: Caminho para salvar o vídeo
+        - frames: list: Lista com os frames que serão salvos no vídeo
     
-    Return:
-        None
+    - Return:
+        - None
     """
     
     if exists(file_name):
@@ -162,6 +168,15 @@ def generate_video(file_name: str, frames, settings: dict):
 
 
 def take_one_frame(video: str | VideoCapture):
+    """
+    Obtém um frame do vídeo
+    
+    - Args:
+        - video: str or VideoCapture: Video que será análisado
+    
+    - Return:
+        - None
+    """
     if isinstance(video, str):
         cap = VideoCapture(video)
 
@@ -185,4 +200,14 @@ def take_one_frame(video: str | VideoCapture):
 
 
 def track_one_frame(frame, model: YOLO = get_model()) -> list[Results]:
+    """
+    Realiza a detecção de objetos em um frame específico
+    
+    - Args:
+        - frame (np.ndarray): Frame do vídeo
+        - model (YOLO): Modelo YOLO para detecção
+    
+    - Return:
+        - list[Results]: Resultados da detecção
+    """
     return model.track(frame, persist=True)

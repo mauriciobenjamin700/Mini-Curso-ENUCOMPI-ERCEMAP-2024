@@ -1,15 +1,8 @@
 """
 Este Modulo é responsavel pela manipulação do Modelo YOLO para detecção e contagem dos animais:
-
-    - Constraints:
         
-    - Funcs:
-        - get_model
-        - predict
-        - track
-        
-    - Classes:
-
+- get_model: Retorna o modelo YOLO Responsavel Pelas Detecções dos objetos
+- features: Extrai as caractéristicas de interesse de um objeto results
 """
 from json import dump, loads
 from os.path import abspath, dirname, join
@@ -20,6 +13,12 @@ from ultralytics.engine.results import Results
 def get_model() -> YOLO:
     """
     Retorna o modelo YOLO Responsavel Pelas Detecções dos objetos
+
+    - Args:
+        - None
+
+    - Return:
+        YOLO: Modelo YOLO responsavel pelas detecções dos objetos
     """
     MODEL_PATH = join(dirname(abspath(__file__)), "yolov8n.pt")
 
@@ -31,16 +30,15 @@ def features(result: Results) -> dict:
     """
     Extrai as caractéristicas de interesse de um objeto results
     
-    Args:
-        result (Results): Objeto results gerado pela yolo após um processo
+    - Args:
+        - result (Results): Objeto results gerado pela yolo após um processo
         
-    Return:
-        dict {
-            confidences,
-            class_ids,
-            class_names,
-            counting_class
-        }
+    - Return:
+        - dict {
+            - confidences,
+            - class_ids,
+            - class_names,
+            - counting_class}
     """
     
     if isinstance(result, list):
@@ -59,12 +57,12 @@ def result2json(results: Results | list, output: str = "file.json"):
     """
     Salva os resultados da detecção em um Arquivo JSON
     
-    Args:
-        results (Results): Objeto results gerado pela yolo após um processo
-        output (str, optional): Caminho para salvar o arquivo json. Defaults to "file.json".
+    - Args:
+        - results (Results): Objeto results gerado pela yolo após um processo
+        - output (str, optional): Caminho para salvar o arquivo json. Defaults to "file.json".
         
-    Return:
-        None
+    - Return:
+        - None
     """
 
     if isinstance(results, list):

@@ -1,3 +1,9 @@
+"""
+Funções para inferir o modelo a detectar em videos
+
+- predict: Realiza a extração das métricas em cada frame do vídeo
+- track: Realiza a marcação das classes no vídeo e retorna uma lista com os resultados e outra com os frames para plot
+"""
 from cv2 import VideoCapture
 from ultralytics import YOLO
 
