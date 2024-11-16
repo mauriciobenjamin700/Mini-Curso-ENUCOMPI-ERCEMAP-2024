@@ -13,7 +13,6 @@ Este Modulo é responsavel pela manipulação dos resultados provindos do Modelo
 
     
 """
-
 from cv2 import (
     VideoCapture, 
     VideoWriter
@@ -25,39 +24,26 @@ from cv2 import (
     VideoWriter_fourcc
 )
 from os.path import exists
-from src.models.detect_model import get_model
 from ultralytics import YOLO
 from ultralytics.engine.results import Results
 
 
-def plot(plots: list) -> None:
-    """
-    Apresenta na tela todos os plots recebidos de track
-    """
-    from cv2 import destroyAllWindows, imshow, waitKey
-    
-    for frame_plot in plots:
-        imshow("Frame", frame_plot)
-        if waitKey(25) & 0xFF == ord('q'):
-            break
-        
-        destroyAllWindows()
+from src.models.detect_model import get_model
         
 
 def get_video_settings(video: str | VideoCapture) -> dict:
     """
     Obtem as configurações do vídeo e as retorna em formato de dicionário
     
-    Args:
-        Vídeo: str or VideoCapture: Video que será análisado
+    - Args:
+        - Vídeo: str or VideoCapture: Video que será análisado
     
-    Return
-        dict{
-            fourcc: int,
-            fps: float,
-            frameSize: Size: tuple
-            is_color: bool
-        }
+    - Return
+        - dict{
+            - fourcc: int,
+            - fps: float,
+            - frameSize: Size: tuple
+            - is_color: bool}
     """
     if isinstance(video, str):
         video = VideoCapture(video)
