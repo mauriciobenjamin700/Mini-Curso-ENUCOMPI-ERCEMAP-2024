@@ -10,7 +10,7 @@ VIDEO_PATH = join(ROOT, "videos", "01.mp4")
 sys.path.insert(0, ROOT)
 
 from src.models.detect_model import get_model, track
-from src.models.frames import generate_video, get_video_settings
+from src.controllers.frames import generate_video, get_video_settings
 
 model = get_model()
 

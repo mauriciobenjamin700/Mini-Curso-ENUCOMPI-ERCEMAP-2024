@@ -14,9 +14,21 @@ Este Modulo é responsavel pela manipulação dos resultados provindos do Modelo
     
 """
 
-from cv2 import VideoCapture, VideoWriter
-from cv2 import CAP_PROP_FRAME_HEIGHT, CAP_PROP_FRAME_WIDTH, CAP_PROP_FPS, VideoWriter_fourcc
+from cv2 import (
+    VideoCapture, 
+    VideoWriter
+)
+from cv2 import (
+    CAP_PROP_FRAME_HEIGHT, 
+    CAP_PROP_FRAME_WIDTH, 
+    CAP_PROP_FPS, 
+    VideoWriter_fourcc
+)
 from os.path import exists
+from src.models.detect_model import get_model
+from ultralytics import YOLO
+from ultralytics.engine.results import Results
+
 
 def plot(plots: list) -> None:
     """
@@ -161,3 +173,30 @@ def generate_video(file_name: str, frames, settings: dict):
         save_video(f"{file_name}_new.mp4",frames, settings)
     else:
         save_video(f"{file_name}_new.mp4",frames, settings)
+
+
+def take_one_frame(video: str | VideoCapture):
+    if isinstance(video, str):
+        cap = VideoCapture(video)
+
+    def validate_capture(cap: VideoCapture) -> bool:
+        if not cap.isOpened():
+            return False
+
+        ret, _ = cap.read()
+        if not ret:
+            return False
+        
+        return True 
+
+    if validate_capture(cap):
+        ret, frame = cap.read()
+        
+        if ret:
+            return frame
+    
+    return None
+
+
+def track_one_frame(frame, model: YOLO = get_model()) -> list[Results]:
+    return model.track(frame, persist=True)
