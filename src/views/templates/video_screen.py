@@ -1,21 +1,24 @@
 import customtkinter as ctk
 from tkinter import filedialog
 import os
-from PIL import Image, ImageTk 
+from PIL import Image, ImageTk
+from src.views.templates.loading_screen import LoadingScreen
 
 class VideoScreen(ctk.CTkFrame):
-    def __init__(self, parent):
+    def __init__(self, parent, show_loading_screen):
         super().__init__(parent)
+        self.show_loading_screen = show_loading_screen  # Callback para exibir a tela de loading
 
         # Configuração da tela
         self.configure(fg_color="#1D2530")  # Cor de fundo escura
 
-        image_path = "images/logo.png"  
+        # Carregar a imagem para o emblema
+        image_path = "images/logo.png"
         self.logo_image = Image.open(image_path)  # Carrega a imagem
         self.logo_image = self.logo_image.resize((240, 120), Image.Resampling.LANCZOS)  # Ajusta o tamanho
         self.logo_photo = ImageTk.PhotoImage(self.logo_image)
 
-        # Emblema no topo (substitua por uma imagem se necessário)
+        # Emblema no topo
         self.logo_label = ctk.CTkLabel(
             self,
             image=self.logo_photo,  # Adicionamos a imagem carregada
@@ -39,9 +42,9 @@ class VideoScreen(ctk.CTkFrame):
             text="Selecionar Vídeo",
             font=("Arial", 16),
             command=self.select_video,
-            fg_color="#FEFAE0", 
+            fg_color="#FEFAE0",
             text_color="black",
-            hover_color="#d4ac0d", 
+            hover_color="#d4ac0d",
         )
         self.select_button.place(relx=0.5, rely=0.4, anchor="center")  # Centralizado no frame de vídeo
 
@@ -88,4 +91,5 @@ class VideoScreen(ctk.CTkFrame):
 
     def start_counting(self):
         print("Contagem iniciada!")
-        # Aqui você pode implementar a lógica de contagem
+        # Chama a tela de loading
+        self.show_loading_screen()
