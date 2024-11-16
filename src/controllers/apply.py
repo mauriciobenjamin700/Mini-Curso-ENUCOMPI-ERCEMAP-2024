@@ -2,24 +2,26 @@ from cv2 import VideoCapture
 from ultralytics import YOLO
 
 
-from src.models.detect_model import features, get_model
+from src.models.detect_model import (
+    features, 
+    get_model
+)
 
 
-def predict(video: str ,model : YOLO = get_model()) -> dict:
+def predict(video: str ,model: YOLO = get_model()) -> dict:
     """
     Realiza a extração das métricas em cada frame do vídeo
     
-    Args:
-        video (str): Caminho para o vídeo que será processado
-        model (YOLO): Modelo YOLO responsavel pelo processamento.
+    - Args:
+        - video (str): Caminho para o vídeo que será processado
+        - model (YOLO): Modelo YOLO responsavel pelo processamento.
         
-    Return:
-        dict {
-            confidences,
-            class_ids,
-            class_names,
-            counting_class
-        }
+    - Return:
+        - dict{
+            - confidences,
+            - class_ids,
+            - class_names,
+            - counting_class}
     """
     
     results = model(video)
@@ -35,12 +37,12 @@ def track(video: str | VideoCapture, model: YOLO = get_model()) -> tuple[list,li
     """
     Realiza a marcação das classes no vídeo e retorna uma lista com os resultados e outra com os frames para plot
     
-    Args:
-        video: str or VideoCapture
-        model: YOLO
+    - Args:
+        - video: str or VideoCapture
+        - model: YOLO
     
-    Return:
-    Tuple(results, frames)
+    - Return:
+        - tuple(results, frames)
     """
 
     if isinstance(video, str):

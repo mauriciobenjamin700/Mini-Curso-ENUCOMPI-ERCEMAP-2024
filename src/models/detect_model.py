@@ -81,7 +81,3 @@ def result2json(results: Results | list, output: str = "file.json"):
     with open(output, "w", encoding='utf-8') as json_file:
         dump(json_object, json_file, ensure_ascii=False, indent=4)
     
-    
-
-
-
