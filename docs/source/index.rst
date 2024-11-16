@@ -15,7 +15,7 @@ Informações do Projeto
 .. toctree::
 
    usage
-   api
+   modules
 
 .. :doc:`usage` adiciona ao documento atual uma arcora para o arquivo usage.rst
 .. :ref:`Instalar o Projeto <installation>` adiciona ao documento atual um link para a ancora installation dentro do arquivo usage

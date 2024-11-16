@@ -20,15 +20,3 @@ Para usar, primeiro clone o repositório do projeto e instale as dependências:
     cd Mini-Curso-ENUCOMPI-ERCEMAP-2024
     pip install -r requirements.txt | poetry install
 
-
-Creating recipes
-----------------
-
-you can use the ``lumache.get_random_ingredients()`` function:
-
-.. autofunction:: lumache.get_random_ingredients
-
-or ``"veggies"``. Otherwise, :py:func:`lumache.get_random_ingredients`
-will raise an exception.
-
-.. autoexception:: lumache.InvalidKindError
