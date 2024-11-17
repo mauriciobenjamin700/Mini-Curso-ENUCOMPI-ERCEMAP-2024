@@ -3,7 +3,7 @@ from ultralytics import YOLO
 
 
 from src.models.configs import CONFIANCE, IOU, FRAME_SKIP
-from src.models.detect_model import (
+from src.models.main import (
     Tracker,
     features, 
     get_model,

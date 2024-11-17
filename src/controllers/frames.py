@@ -28,7 +28,7 @@ from ultralytics import YOLO
 from ultralytics.engine.results import Results
 
 
-from src.models.detect_model import get_model
+from src.models.main import get_model
         
 
 def get_video_settings(video: str | VideoCapture) -> dict:

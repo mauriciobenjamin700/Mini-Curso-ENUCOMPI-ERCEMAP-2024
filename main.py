@@ -3,7 +3,7 @@ from src.views.welcome_screen import WelcomeScreen
 from src.views.video_screen import VideoScreen
 from src.views.loading_screen import LoadingScreen
 from src.views.results_screen import ResultsScreen
-from src.models.detect_model import get_model, features
+from src.models.main import get_model, features
 from src.controllers.apply import predict, track, count_unique_animals
 
 

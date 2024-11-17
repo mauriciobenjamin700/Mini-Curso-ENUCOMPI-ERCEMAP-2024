@@ -2,7 +2,7 @@ from json import load
 from pytest import fixture
 
 
-from src.models.detect_model import get_model
+from src.models.main import get_model
 
 @fixture
 def get_yolo_model():

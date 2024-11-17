@@ -1,6 +1,6 @@
 from src.controllers.apply import predict, count_unique_animals
 from src.controllers.save import to_json
-from src.models.detect_model import get_model
+from src.models.main import get_model
 
 
 video = "videos/03.mp4"

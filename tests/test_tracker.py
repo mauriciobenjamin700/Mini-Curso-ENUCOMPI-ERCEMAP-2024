@@ -1,6 +1,6 @@
 from json import load
 
-from src.models.detect_model import is_same_animal
+from src.models.main import is_same_animal
 
 
 def test_same_animal(mock_predict):
