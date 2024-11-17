@@ -3,13 +3,21 @@ import customtkinter as ctk
 class LoadingScreen(ctk.CTkFrame):
     """
     Tela de carregamento com uma barra de progresso que simula um processo assíncrono.
-    
+
     Args:
         parent: Referência ao widget pai onde esta tela será adicionada.
-        on_complete: Função de callback que será chamada ao final do carregamento.
-        data (dict, optional): Dados que serão passados para a função de callback.
+        on_complete (function): Função de callback que será chamada ao final do carregamento.
+        data (dict, optional): Dados que serão passados para a função de callback. Default é None.
     """
     def __init__(self, parent, on_complete, data=None):
+        """
+        Inicializa a tela de carregamento com uma barra de progresso e configura o comportamento assíncrono.
+
+        Args:
+            parent: Referência ao widget pai onde esta tela será adicionada.
+            on_complete (function): Função a ser chamada ao concluir o carregamento.
+            data (dict, optional): Dados opcionais para passar à função de callback.
+        """
         super().__init__(parent)
 
         # Configurações da tela
@@ -41,13 +49,11 @@ class LoadingScreen(ctk.CTkFrame):
         # Simula um carregamento de 3 segundos antes de concluir
         self.after(3000, self.complete_loading)
 
-    #def complete_loading(self):
-    #    self.progress_bar.stop()  # Para a barra de progresso
-    #    if self.data:
-    #        self.on_complete(self.data)  # Passa os dados para o callback
-    #    else:
-    #        print("Erro: Nenhum dado foi fornecido para a próxima tela.")
-    #    self.destroy()  # Destroi a tela de loading
     def complete_loading(self):
+        """
+        Conclui o carregamento chamando a função de callback e encerrando a tela de carregamento.
+
+        Se os dados foram fornecidos, eles podem ser passados para a função de callback.
+        """
         self.on_complete()  # Chama a função de callback após o carregamento
         self.destroy()  # Fecha a tela de carregamento

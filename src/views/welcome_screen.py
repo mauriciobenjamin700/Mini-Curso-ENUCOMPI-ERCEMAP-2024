@@ -2,7 +2,19 @@ import customtkinter as ctk
 from PIL import Image, ImageTk
 
 class WelcomeScreen(ctk.CTkFrame):
-    def __init__(self, parent, on_start):
+    """
+    Tela de boas-vindas que exibe uma mensagem introdutória e uma imagem de fundo.
+
+    Args:
+        parent: Referência ao widget pai onde esta tela será adicionada.
+    """
+    def __init__(self, parent):
+        """
+        Inicializa a tela de boas-vindas com uma imagem de fundo e uma mensagem.
+
+        Args:
+            parent: Referência ao widget pai onde esta tela será adicionada.
+        """
         super().__init__(parent)
 
         # Configurações da tela
@@ -28,15 +40,3 @@ class WelcomeScreen(ctk.CTkFrame):
         )
         self.title_label.place(relx=0.02, rely=0.2, anchor="w")  # Posiciona à esquerda com padding
 
-        # Botão de navegação ou próximo passo
-        """self.next_button = ctk.CTkButton(
-            self,
-            text="Iniciar",
-            command=on_start,  # Chama a função para carregar a próxima tela
-            font=("Arial", 18, "bold"),
-            width=150,
-            height=40,
-            fg_color="#c0c3bd",
-            text_color="black" 
-        )
-        self.next_button.place(relx=0.5, rely=0.8, anchor="center")"""

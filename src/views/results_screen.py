@@ -5,9 +5,40 @@ from tkinter import filedialog
 
 
 class ResultsScreen(ctk.CTkFrame):
+    """
+    Tela para exibição de resultados e exportação de dados em diferentes formatos.
+    
+    Args:
+        parent: Referência ao widget pai onde esta tela será adicionada.
+        data (dict): Dados a serem exibidos na tela e exportados.
+        go_back_callback (function): Função de callback para retornar à tela anterior.
+    """
+    # Mapeamento de traduções
+    ANIMAL_TRANSLATIONS = {
+        "bird": "Pássaro",
+        "cat": "Gato",
+        "dog": "Cachorro",
+        "horse": "Cavalo",
+        "sheep": "Ovelha",
+        "cow": "Vaca",
+        "elephant": "Elefante",
+        "bear": "Urso",
+        "zebra": "Zebra",
+        "giraffe": "Girafa",
+    }
+
     def __init__(self, parent, data, go_back_callback):
+        """
+        Inicializa a tela com os elementos visuais necessários para exibição e exportação de resultados.
+
+        Args:
+            parent: Referência ao widget pai.
+            data (dict): Dados a serem exibidos e exportados.
+            go_back_callback (function): Função de callback para retornar à tela anterior.
+        """
         super().__init__(parent)
         self.go_back_callback = go_back_callback  # Callback para voltar à tela anterior
+        self.data = data  # Dados recebidos para exibição e exportação
 
         # Configuração da tela
         self.configure(fg_color="#1D2530")  # Cor de fundo escura
@@ -62,13 +93,26 @@ class ResultsScreen(ctk.CTkFrame):
         self.export_button.place(relx=0.8, rely=0.2, anchor="center")
 
     def format_data(self, data):
-        # Converte o JSON em um texto legível
-        formatted_text = "\n".join([f"{key} - {value}" for key, value in data.items()])
-        return formatted_text
+        """
+        Formata os dados para exibição em um formato legível e traduz os nomes para o português.
+
+        Args:
+            data (dict): Dados no formato de dicionário.
+
+        Returns:
+            str: Dados formatados em texto com linhas separadas.
+        """
+        formatted_lines = []
+        for key, value in data.items():
+            translated_key = self.ANIMAL_TRANSLATIONS.get(key, key)  # Tradução ou mantém o original
+            formatted_lines.append(f"{translated_key} - {value}")
+        return "\n".join(formatted_lines)
 
     def show_export_options(self):
-        # Janela para exportar o JSON em diferentes formatos
-        options = [".csv", ".xlsx", ".json", ".txt", ".pdf"]
+        """
+        Mostra opções para exportação dos dados em diferentes formatos.
+        """
+        options = [".csv", ".xlsx", ".json", ".txt"]
         for idx, ext in enumerate(options):
             ctk.CTkButton(
                 self,
@@ -83,38 +127,32 @@ class ResultsScreen(ctk.CTkFrame):
             ).place(relx=0.8, rely=0.3 + idx * 0.06, anchor="center")  # Espaçamento reduzido
 
     def export_file(self, file_type):
-        # Janela para salvar o arquivo
-        file_path = filedialog.asksaveasfilename(defaultextension=file_type, filetypes=[(file_type, f"*{file_type}")])
+        """
+        Exporta os dados para o formato especificado.
+
+        Args:
+            file_type (str): Extensão do arquivo ('.txt', '.json', '.csv', '.xlsx').
+        """
+        file_path = filedialog.asksaveasfilename(defaultextension=file_type, filetypes=[(file_type, f"*{file_type}")])   # Janela para salvar o arquivo
 
         if file_path:
-            data_dict = {
-                "Cavalo": 20,
-                "Bois": 10,
-                "Zebras": 1,
-                "Cabras": 2,
-            }
             # Exporta nos diferentes formatos
             if file_type == ".csv":
-                pd.DataFrame.from_dict(data_dict, orient="index").to_csv(file_path, header=False)
+                pd.DataFrame.from_dict(self.data, orient="index").to_csv(file_path, header=False)
             elif file_type == ".xlsx":
-                pd.DataFrame.from_dict(data_dict, orient="index").to_excel(file_path, header=False)
+                pd.DataFrame.from_dict(self.data, orient="index").to_excel(file_path, header=False)
             elif file_type == ".json":
                 with open(file_path, "w") as f:
-                    json.dump(data_dict, f, indent=4)
+                    json.dump(self.data, f, indent=4)
             elif file_type == ".txt":
                 with open(file_path, "w") as f:
-                    for key, value in data_dict.items():
-                        f.write(f"{key} - {value}\n")
-            elif file_type == ".pdf":
-                # Aqui seria necessário usar uma biblioteca como ReportLab para exportar PDF
-                with open(file_path, "w") as f:
-                    f.write("PDF exportado (exemplo)\n")
-                    for key, value in data_dict.items():
+                    for key, value in self.data.items():
                         f.write(f"{key} - {value}\n")
             print(f"Arquivo exportado para {file_path}")
 
     def go_back(self):
-        # Esconde a tela atual
+        """
+        Esconde a tela atual e chama a função de callback para voltar à tela anterior.
+        """
         self.pack_forget()
-        # Chama o callback para exibir a tela anterior
         self.go_back_callback()

@@ -6,7 +6,21 @@ from src.views.loading_screen import LoadingScreen
 from src.controllers.apply import predict
 
 class VideoScreen(ctk.CTkFrame):
+    """
+    Tela para seleção de vídeo, exibição de informações sobre o arquivo escolhido e execução de processamento de contagem.
+
+    Args:
+        parent: Referência ao widget pai onde esta tela será adicionada.
+        show_loading_screen (function): Função de callback para exibir a tela de carregamento com o vídeo selecionado.
+    """
     def __init__(self, parent, show_loading_screen):
+        """
+        Inicializa a tela para seleção e processamento de vídeos.
+
+        Args:
+            parent: Referência ao widget pai onde esta tela será adicionada.
+            show_loading_screen (function): Função a ser chamada para exibir a tela de carregamento.
+        """
         super().__init__(parent)
         self.show_loading_screen = show_loading_screen  # Callback para exibir a tela de loading
 
@@ -72,8 +86,13 @@ class VideoScreen(ctk.CTkFrame):
         self.count_button.place(relx=0.9, rely=0.9, anchor="center")  # Canto inferior direito
 
     def select_video(self):
-        # Abrir seletor de arquivos e permitir apenas vídeos
-        file_path = filedialog.askopenfilename(
+        """
+        Abre um seletor de arquivos para o usuário escolher um vídeo.
+
+        Se um vídeo for selecionado, atualiza o label com o nome do arquivo. 
+        Caso contrário, exibe uma mensagem indicando que nenhum arquivo foi selecionado.
+        """
+        file_path = filedialog.askopenfilename( # Abrir seletor de arquivos e permitir apenas vídeos
             title="Selecione um vídeo",
             filetypes=[
                 ("Arquivos de vídeo", "*.mp4 *.avi *.mkv *.mov *.flv"),  # Tipos permitidos
@@ -93,6 +112,12 @@ class VideoScreen(ctk.CTkFrame):
             print("Nenhum vídeo foi selecionado.")
 
     def start_counting(self):
+        """
+        Inicia o processo de contagem para o vídeo selecionado.
+
+        Se nenhum vídeo for selecionado, exibe uma mensagem de erro no label.
+        Caso contrário, exibe a tela de carregamento com o caminho do vídeo.
+        """
         if not hasattr(self, "selected_video_path") or not self.selected_video_path:
             self.file_name_label.configure(text="Por favor, selecione um vídeo primeiro!")
             return
@@ -104,6 +129,12 @@ class VideoScreen(ctk.CTkFrame):
 
 
     def process_video(self):
+        """
+        Processa o vídeo selecionado e exibe os resultados.
+
+        Chama a função `predict` para realizar a contagem e envia os resultados para a tela de resultados.
+        Se ocorrer um erro, exibe uma mensagem no label.
+        """
         video_path = self.selected_video_path
         print(f"Processando o vídeo: {video_path}")
         
