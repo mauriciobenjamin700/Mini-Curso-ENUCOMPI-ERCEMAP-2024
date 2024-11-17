@@ -1,17 +1,4 @@
-"""
-Este Modulo é responsavel pela manipulação do Modelo YOLO para detecção e contagem dos animais:
-
-    - Constraints:
-        
-    - Funcs:
-        - get_model
-        - predict
-        - track
-        
-    - Classes:
-
-"""
-from json import dump, loads
+from pickle import FALSE
 import numpy as np
 from os.path import abspath, dirname, join
 from ultralytics import YOLO
@@ -119,9 +106,8 @@ def features(result: Results, tracker: Tracker = Tracker()) -> dict:
             tracks
         }
     """
-    
     if isinstance(result, list):
-        result = result[0]
+        raise ValueError("Results must be a Results object")
     
     dic = {}
     dic["boxes"] = result.boxes.xywh.tolist()  # Boxes object for bounding box outputs
@@ -132,15 +118,14 @@ def features(result: Results, tracker: Tracker = Tracker()) -> dict:
     
     tracker.update(dic["boxes"], dic["class_names"])
     dic["tracks"] = tracker.get_tracks()
-
-    print(dic)
     
     return dic
-
 
 def is_same_animal(box1: list[float, float, float, float], box2: list[float, float, float, float], max_distance=MAX_DISTANCE) -> bool:
     """
     Verifica se dois rastros pertencem ao mesmo animal com base na distância entre as caixas delimitadoras.
+
+    a função retorna True se a distância entre as caixas delimitadoras for menor ou igual a max_distance, indicando que elas pertencem ao mesmo animal. Caso contrário, retorna False, indicando que as caixas estão muito distantes para serem consideradas do mesmo animal.
 
     Args:
         track1, track2: Listas de caixas delimitadoras no formato [x, y, w, h].
@@ -149,6 +134,4 @@ def is_same_animal(box1: list[float, float, float, float], box2: list[float, flo
     Return:
         bool: True se for o mesmo animal, False caso contrário.
     """
-    if box_distance(box1, box2) < max_distance:
-        return True
-    return False
+    return box_distance(box1, box2) <= max_distance

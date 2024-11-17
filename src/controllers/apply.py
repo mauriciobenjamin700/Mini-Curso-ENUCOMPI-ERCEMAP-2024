@@ -2,7 +2,7 @@ from cv2 import VideoCapture
 from ultralytics import YOLO
 
 
-from src.models.configs import CONFIANCE, IOU #,FRAME_SKIP
+from src.models.configs import CONFIANCE, IOU, FRAME_SKIP
 from src.models.detect_model import (
     Tracker,
     features, 
@@ -30,14 +30,22 @@ def predict(video: str ,model: YOLO = get_model()) -> dict:
             - counting_class}
     """
     
-    results = model(video, conf=CONFIANCE, classes=animals_list, iou=IOU),#vid_stride=FRAME_SKIP
+    results = model(video, conf=CONFIANCE, classes=animals_list, iou=IOU, vid_stride=FRAME_SKIP) 
 
     predicts = {}
 
     tracker = Tracker()
+
+    if not results:
+        raise ValueError("No results found")
+
+
     
-    for id, result in enumerate(results,0): 
+    frames_result = results
+    
+    for id, result in enumerate(frames_result,0):
         predicts[id] = features(result, tracker)
+        print(f"Frame {id} processed: {predicts[id]}")
     
     return predicts
 
@@ -104,8 +112,6 @@ def count_unique_animals(results: dict) -> dict[str,int]:
     tracked_animals = {}
     animals_quantity = {}
 
-    print(results)
-
     for frame in results:
 
         tracks = results[frame]['tracks']
@@ -115,9 +121,6 @@ def count_unique_animals(results: dict) -> dict[str,int]:
             for item in tracks:
 
                 for class_name, box in item:
-
-                    # print(class_name)
-                    # print(box)
 
                     if class_name not in tracked_animals.keys(): # primeira vez que a classe aparece
 
@@ -134,8 +137,6 @@ def count_unique_animals(results: dict) -> dict[str,int]:
                         if box not in tracked_animals[class_name]: # Se a caixa não foi contada
 
                             for tracked_box in tracked_animals[class_name]: # percorre todas as caixas já contadas daquela classe de animal
-
-                                print(tracked_box)
 
                                 if is_same_animal(box, tracked_box): # Se a caixa é proxima a alguma caixa já contada
                                         
