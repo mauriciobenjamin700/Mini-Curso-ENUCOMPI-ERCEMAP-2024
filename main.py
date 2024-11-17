@@ -4,7 +4,7 @@ from src.views.video_screen import VideoScreen
 from src.views.loading_screen import LoadingScreen
 from src.views.results_screen import ResultsScreen
 from src.models.detect_model import get_model, features
-from src.controllers.apply import predict, track
+from src.controllers.apply import predict, track, count_unique_animals
 
 
 class MainWindow(ctk.CTk):
@@ -54,7 +54,8 @@ class MainWindow(ctk.CTk):
         # Processa o vídeo usando a função `predict`
         try:
             results = predict(video_path)
-            counting_data = {class_name: count for class_name, count in results[0]['counting_class'].items()}
+            
+            counting_data = count_unique_animals(results)
 
             # Exibe a tela de resultados com os dados processados
             self.show_results_screen(counting_data)
