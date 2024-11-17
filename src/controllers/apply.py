@@ -2,11 +2,17 @@ from cv2 import VideoCapture
 from ultralytics import YOLO
 
 
+from src.models.configs import CONFIANCE, IOU #,FRAME_SKIP
 from src.models.detect_model import (
+    Tracker,
     features, 
-    get_model
+    get_model,
+    is_same_animal
 )
+from src.models.classes import animals_list
 
+
+# https://docs.ultralytics.com/modes/predict/#inference-arguments
 
 def predict(video: str ,model: YOLO = get_model()) -> dict:
     """
@@ -24,12 +30,14 @@ def predict(video: str ,model: YOLO = get_model()) -> dict:
             - counting_class}
     """
     
-    results = model(video)
+    results = model(video, conf=CONFIANCE, classes=animals_list, iou=IOU),#vid_stride=FRAME_SKIP
 
     predicts = {}
+
+    tracker = Tracker()
     
     for id, result in enumerate(results,0): 
-        predicts[id] = features(result)
+        predicts[id] = features(result, tracker)
     
     return predicts
 
@@ -80,3 +88,75 @@ def track(video: str | VideoCapture, model: YOLO = get_model()) -> tuple[list,li
         
     else:
         return ([], [])
+    
+
+def count_unique_animals(results: dict) -> dict[str,int]:
+    """
+    Retorna a quantidade de animais únicos detectados
+    
+    - Args:
+        - dict: dict
+    
+    - Return:
+        - dict:{"animal": int}
+    """
+    
+    tracked_animals = {}
+    animals_quantity = {}
+
+    print(results)
+
+    for frame in results:
+
+        tracks = results[frame]['tracks']
+        
+        if tracks:
+            
+            for item in tracks:
+
+                for class_name, box in item:
+
+                    # print(class_name)
+                    # print(box)
+
+                    if class_name not in tracked_animals.keys(): # primeira vez que a classe aparece
+
+                        tracked_animals[class_name] = []
+
+                        tracked_animals[class_name].append(box)
+
+                        animals_quantity[class_name] = 1
+
+                    else: # Se a classe já existe, precisa-se checar se não é um animal já contado
+                        
+                        same_animal = False
+
+                        if box not in tracked_animals[class_name]: # Se a caixa não foi contada
+
+                            for tracked_box in tracked_animals[class_name]: # percorre todas as caixas já contadas daquela classe de animal
+
+                                print(tracked_box)
+
+                                if is_same_animal(box, tracked_box): # Se a caixa é proxima a alguma caixa já contada
+                                        
+                                        same_animal = True
+    
+                                        break
+                                
+                            if not same_animal: # Se a caixa não é proxima a nenhuma caixa já contada
+
+                                tracked_animals[class_name].append(box) # Salva a caixa de um novo animal
+                                
+                                animals_quantity[class_name] += 1  # Adiciona mais um animal da mesma classe
+                            
+                            else: # Apenas adiciona a box na lista para comparações futuras
+
+                                tracked_animals[class_name].append(box)
+
+
+
+
+    return animals_quantity
+
+    
+    
