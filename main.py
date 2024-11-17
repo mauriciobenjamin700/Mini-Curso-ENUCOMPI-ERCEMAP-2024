@@ -1,10 +1,12 @@
 import customtkinter as ctk
+
+
 from src.views.welcome_screen import WelcomeScreen
 from src.views.video_screen import VideoScreen
 from src.views.loading_screen import LoadingScreen
 from src.views.results_screen import ResultsScreen
-from src.models.main import get_model, features
-from src.controllers.apply import predict, track, count_unique_animals
+from src.models.main import get_model
+from src.controllers.apply import predict, count_unique_animals
 
 
 class MainWindow(ctk.CTk):
@@ -30,6 +32,7 @@ class MainWindow(ctk.CTk):
         self.video_screen = VideoScreen(self, self.show_loading_screen)  # Tela de seleção de vídeo
         self.loading_screen = None  # Inicialmente, a tela de carregamento é None
         self.results_screen = None  # Inicialmente, a tela de resultados é None
+        self.model = get_model()
 
         # Exibe a tela inicial (boas-vindas)
         self.show_welcome_screen()
@@ -83,7 +86,7 @@ class MainWindow(ctk.CTk):
         """
         try:
             # Realiza a predição no vídeo
-            results = predict(video_path)
+            results = predict(video_path, self.model)
 
             # Conta os animais únicos detectados
             counting_data = count_unique_animals(results)
